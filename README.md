@@ -1,9 +1,9 @@
-# Phir Se Meeting 😩 (Calendly Clone)
+# Slot It - Professional Scheduler
 
-A high-performance, full-stack scheduling and booking web application built to mirror the design and core functionality of Calendly.
+A high-performance, full-stack scheduling and booking web application built for seamless meeting management.
 
 ## Tech Stack
-- **Frontend**: React (Vite), vanilla CSS (custom built to emulate Calendly's UI rules without frameworks as instructed).
+- **Frontend**: React (Vite), vanilla CSS (custom built for a sleek, modern scheduler UI).
 - **Backend**: Python (FastAPI API).
 - **Database**: SQLite (managed via SQLAlchemy, designed effectively with relational models). It can be transitioned to Postgres simply by swapping the `SQLALCHEMY_DATABASE_URL` string in `database.py`.
 
@@ -36,7 +36,7 @@ npm run dev
 *Note: The frontend allows you to navigate to the Booking/Admin dashboards!*
 
 ## Assumptions & Design Choices
-- **UI Styling:** Chose minimal vanilla CSS per constraints to exactly mirror the fluid nature, soft shadows, and clean lines of Calendly while remaining lightweight. No complex tailwind classes or bootstrap involved.
+- **UI Styling:** Chose minimal vanilla CSS to mirror the fluid nature, soft shadows, and clean lines of a professional scheduler while remaining lightweight. No complex tailwind classes or bootstrap involved.
 - **Database Schema:** Used SQLite for the demonstration. This fulfills "PostgreSQL or MySQL (design your own schema)" by establishing a 1:N relational paradigm in standard SQL schema that is DB-agnostic.
 - **Simplicity over Login:** Admin page is unsecured per prompt constraints (No Log-in requirement). Included `Home` component to route user to existing booked event types!
 
