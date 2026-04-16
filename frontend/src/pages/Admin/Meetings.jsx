@@ -133,19 +133,23 @@ export default function Meetings() {
                     </span>
                   </td>
                   <td style={{ padding: '24px 12px' }}>
-                    {sentIds.includes(m.id) ? (
-                      <div style={{ color: '#0f8243', fontWeight: 600, fontSize: 13, background: '#e0faeb', padding: '8px 12px', borderRadius: 8, textAlign: 'center' }}>
-                        ✅ Sent
+                    {m.admin_notes || sentIds.includes(m.id) ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <div style={{ color: '#0f8243', fontWeight: 700, fontSize: 11, background: '#e0faeb', padding: '4px 8px', borderRadius: 6, display: 'inline-block', width: 'fit-content' }}>
+                          ✅ SENT RESPONSE
+                        </div>
+                        <div style={{ fontSize: 12, color: '#444', background: '#f8f9fa', padding: 10, borderRadius: 8, border: '1px solid #eee', marginTop: 4, lineHeight: 1.4 }}>
+                          {m.admin_notes || "Response sent successfully."}
+                        </div>
                       </div>
                     ) : (
                       m.custom_responses && m.custom_responses !== '{}' && m.custom_responses !== '[]' ? (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                           <textarea 
                             key={m.id}
-                            defaultValue={m.admin_notes} 
-                            placeholder="Reply to notes..." 
+                            placeholder="Type your reply here..." 
                             id={`note-${m.id}`}
-                            style={{ fontSize: 11, padding: 8, borderRadius: 6, border: '1px solid #ddd', width: 170, height: 60 }} 
+                            style={{ fontSize: 11, padding: 8, borderRadius: 6, border: '1px solid #ddd', width: 180, height: 60 }} 
                           />
                           <button 
                             className="btn btn-primary" 
@@ -153,16 +157,17 @@ export default function Meetings() {
                             onClick={async () => {
                                const el = document.getElementById(`note-${m.id}`);
                                const val = el.value;
+                               if(!val) return;
                                await api.post(`/meetings/${m.id}/notes`, { notes: val });
                                setSentIds([...sentIds, m.id]);
-                               el.value = ""; 
+                               fetchMeetings(); // Refresh to show the saved note properly
                             }}
                           >
                             Send Response
                           </button>
                         </div>
                       ) : (
-                        <span style={{ fontSize: 12, color: '#999', fontStyle: 'italic' }}>No notes</span>
+                        <span style={{ fontSize: 12, color: '#999', fontStyle: 'italic' }}>No notes provided</span>
                       )
                     )}
                   </td>
