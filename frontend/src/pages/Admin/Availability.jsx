@@ -24,13 +24,17 @@ export default function Availability() {
   const handleCreate = async (e) => {
     e.preventDefault();
     const fd = new FormData(e.target);
-    await api.post('/availability', {
-      day_of_week: parseInt(fd.get('day_of_week')),
-      start_time: fd.get('start_time') + ":00",
-      end_time: fd.get('end_time') + ":00",
-      timezone: fd.get('timezone') || "UTC"
-    });
-    fetchAvailabilities();
+    try {
+      await api.post('/availability', {
+        day_of_week: parseInt(fd.get('day_of_week')),
+        start_time: fd.get('start_time') + ":00",
+        end_time: fd.get('end_time') + ":00",
+        timezone: fd.get('timezone') || "Asia/Kolkata"
+      });
+      fetchAvailabilities();
+    } catch (error) {
+      alert(error.response?.data?.detail || "Could not save availability.");
+    }
   };
 
   const handleDelete = async (id) => {

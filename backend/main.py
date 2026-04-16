@@ -75,6 +75,17 @@ def delete_event_type(id: int, db: Session = Depends(get_db)):
 # --- Availability ---
 @app.post("/availability", response_model=schemas.Availability)
 def create_availability(availability: schemas.AvailabilityCreate, db: Session = Depends(get_db)):
+    # Check for exact duplicate availability
+    existing = db.query(models.Availability).filter(
+        models.Availability.day_of_week == availability.day_of_week,
+        models.Availability.start_time == availability.start_time,
+        models.Availability.end_time == availability.end_time,
+        models.Availability.timezone == availability.timezone
+    ).first()
+    
+    if existing:
+        raise HTTPException(status_code=400, detail="This exact availability schedule already exists.")
+        
     db_availability = models.Availability(**availability.model_dump())
     db.add(db_availability)
     db.commit()
