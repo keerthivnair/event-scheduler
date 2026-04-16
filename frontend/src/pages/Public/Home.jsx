@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <div style={{ maxWidth: 800, margin: '60px auto', padding: '0 20px' }} className="fade-in">
       <div style={{ textAlign: 'center', marginBottom: 40 }}>
-        <h1 style={{ fontSize: 36, marginBottom: 10 }}>Phir Se</h1>
+        <h1 style={{ fontSize: 36, marginBottom: 10 }}>Slot It</h1>
         <p style={{ color: 'var(--text-muted)', fontSize: 18 }}>Welcome! Please choose an event type below to book a time.</p>
         <Link to="/admin" style={{ display: 'inline-block', marginTop: 15 }} className="btn btn-outline">Go to Admin Dashboard</Link>
       </div>
