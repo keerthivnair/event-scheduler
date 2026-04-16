@@ -131,6 +131,14 @@ def get_available_slots(target_date: date, event_type_id: int, db: Session = Dep
         current_dt = datetime.combine(target_date, av.start_time)
         end_dt = datetime.combine(target_date, av.end_time)
 
+        # Handle exact local time based on the timezone selected!
+        try:
+            from zoneinfo import ZoneInfo
+            tz = ZoneInfo(av.timezone)
+            now_tz = datetime.now(tz).replace(tzinfo=None)
+        except Exception:
+            now_tz = now
+
         while current_dt + timedelta(minutes=duration) <= end_dt:
             slot_end_dt = current_dt + timedelta(minutes=duration)
             
@@ -141,7 +149,7 @@ def get_available_slots(target_date: date, event_type_id: int, db: Session = Dep
                     overlap = True
                     break
             
-            if not overlap and current_dt >= now:
+            if not overlap and slot_end_dt > now_tz:
                 available_slots.append(current_dt.strftime("%H:%M:%S"))
                 
             current_dt += timedelta(minutes=30) # Interval between options, let's make it 30 mins
