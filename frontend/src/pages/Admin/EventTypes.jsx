@@ -7,11 +7,22 @@ import './EventTypes.css';
 export default function EventTypes() {
   const navigate = useNavigate();
   const [eventTypes, setEventTypes] = useState([]);
+  const [schedules, setSchedules] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [form, setForm] = useState({ name: '', duration: 30, slug: '', description: '' });
+  const [form, setForm] = useState({ 
+    name: '', 
+    duration: 30, 
+    slug: '', 
+    description: '',
+    buffer_before: 0,
+    buffer_after: 0,
+    schedule_id: null,
+    custom_questions: ''
+  });
 
   useEffect(() => {
     fetchEventTypes();
+    fetchSchedules();
   }, []);
 
   const fetchEventTypes = async () => {
@@ -23,24 +34,42 @@ export default function EventTypes() {
     }
   };
 
+  const fetchSchedules = async () => {
+    try {
+      const res = await api.get('/schedules');
+      setSchedules(res.data);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const handleChange = (e) => {
-    if (e.target.name === 'name') {
-      const slug = e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-      setForm({ ...form, name: e.target.value, slug });
+    const { name, value } = e.target;
+    if (name === 'name') {
+      const slug = value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      setForm({ ...form, name: value, slug });
     } else {
-      setForm({ ...form, [e.target.name]: e.target.value });
+      const val = (name === 'duration' || name === 'buffer_before' || name === 'buffer_after') 
+                  ? parseInt(value) || 0 
+                  : value;
+      setForm({ ...form, [name]: val });
     }
   };
 
   const handleCreateOrUpdate = async () => {
     try {
+      const data = { ...form };
+      if (!data.schedule_id && schedules.length > 0) {
+        data.schedule_id = schedules.find(s => s.is_default)?.id || schedules[0].id;
+      }
+
       if (form.id) {
-        await api.put(`/event_types/${form.id}`, form);
+        await api.put(`/event_types/${form.id}`, data);
       } else {
-        await api.post('/event_types', form);
+        await api.post('/event_types', data);
       }
       setShowModal(false);
-      setForm({ name: '', duration: 30, slug: '', description: '' });
+      resetForm();
       fetchEventTypes();
     } catch (err) {
       console.error(err);
@@ -48,13 +77,31 @@ export default function EventTypes() {
     }
   };
 
+  const resetForm = () => {
+    setForm({ 
+      name: '', 
+      duration: 30, 
+      slug: '', 
+      description: '',
+      buffer_before: 0,
+      buffer_after: 0,
+      schedule_id: schedules.find(s => s.is_default)?.id || null,
+      custom_questions: ''
+    });
+  };
+
   const handleEdit = (et) => {
-    setForm(et);
+    setForm({
+      ...et,
+      buffer_before: et.buffer_before || 0,
+      buffer_after: et.buffer_after || 0,
+      custom_questions: et.custom_questions || ''
+    });
     setShowModal(true);
   };
 
   const handleDelete = async (id) => {
-    if (confirm("Delete this event type? All upcoming meetings for this event type will be cancelled and users will be notified by email.")) {
+    if (confirm("Delete this event type? All upcoming meetings for this event type will be cancelled.")) {
       try {
         await api.delete(`/event_types/${id}`);
         fetchEventTypes();
@@ -66,7 +113,7 @@ export default function EventTypes() {
   };
 
   const openModal = () => {
-    setForm({ name: '', duration: 30, slug: '', description: '' });
+    resetForm();
     setShowModal(true);
   };
   const closeModal = () => setShowModal(false);
@@ -75,9 +122,14 @@ export default function EventTypes() {
     <div className="et-root">
 
       <div className="et-page">
-        <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', color: 'var(--gray-500)', cursor: 'pointer', marginBottom: 24, fontSize: 14, display: 'flex', alignItems: 'center', gap: 6, fontWeight: 500 }}>
-          <span>←</span> Go Back
-        </button>
+        <div style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
+          <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', color: 'var(--gray-500)', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', gap: 6, fontWeight: 500 }}>
+            <span>←</span> Back
+          </button>
+          <button onClick={() => navigate('/')} style={{ background: 'none', border: 'none', color: 'var(--blue-600)', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600 }}>
+            Home <span>→</span>
+          </button>
+        </div>
         {/* ── Header ── */}
         <div className="et-header">
           <div className="et-header-text">
@@ -131,7 +183,7 @@ export default function EventTypes() {
       {showModal && (
         <>
           <div className="et-modal-overlay" onClick={closeModal} />
-          <div className="et-modal">
+          <div className="et-modal" style={{ maxWidth: 900 }}>
 
             {/* Header */}
             <div className="et-modal-header">
@@ -150,7 +202,7 @@ export default function EventTypes() {
             </div>
 
             {/* Body */}
-            <div className="et-modal-body">
+            <div className="et-modal-body" style={{ overflowY: 'auto', maxHeight: '70vh' }}>
 
               {/* ── Form Side ── */}
               <div className="et-modal-form">
@@ -173,49 +225,65 @@ export default function EventTypes() {
 
                 {/* Duration */}
                 <div className="et-field">
-                  <label className="et-label">Duration</label>
-                  <div className="et-duration-pills">
-                    {[15, 30, 45, 60].map(d => (
-                      <button
-                        key={d}
-                        type="button"
-                        className={`et-pill ${form.duration === d ? 'active' : ''}`}
-                        onClick={() => setForm({ ...form, duration: d })}
-                      >
-                        {d} min
-                      </button>
-                    ))}
-                  </div>
-                  <div className="et-duration-custom">
-                    <label>Custom:</label>
+                  <label className="et-label">Duration (minutes)</label>
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                     <input
                       type="number"
+                      name="duration"
+                      className="et-input"
+                      style={{ width: 80 }}
                       value={form.duration}
-                      min={5}
-                      max={480}
-                      onChange={e => setForm({ ...form, duration: parseInt(e.target.value) || 30 })}
+                      onChange={handleChange}
                     />
-                    <span style={{fontSize:13, color:'var(--gray-400)'}}>minutes</span>
+                    <span style={{ fontSize: 13, color: '#666' }}>min per session</span>
                   </div>
                 </div>
 
-                {/* Slug */}
-                <div className="et-field">
-                  <label className="et-label">Booking Link</label>
-                  <div className="et-slug-wrap">
-                    <span className="et-slug-prefix">yourapp.com/book/</span>
-                    <input
-                      className="et-slug-input"
-                      value={form.slug}
-                      readOnly
-                      placeholder="auto-generated"
-                    />
+                {/* Buffer */}
+                <div className="et-field" style={{ background: 'rgba(0, 107, 255, 0.03)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(0, 107, 255, 0.1)' }}>
+                  <label className="et-label" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    🛡️ Buffer Time 
+                  </label>
+                  <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
+                    <div style={{ flex: 1 }}>
+                      <label style={{ fontSize: 12, display: 'block', marginBottom: 4 }}>Time Before Meeting (min)</label>
+                      <input type="number" name="buffer_before" className="et-input" value={form.buffer_before} onChange={handleChange} />
+                    </div>
                   </div>
+                  <div style={{ fontSize: 12, color: '#5c6e7e', lineHeight: 1.5 }}>
+                    <strong>What is Buffer?</strong> It's a "cushion" of free time added before your call. 
+                    If you set 10 mins, no one can book you 10 mins before your next meeting starts, 
+                    giving you time to prep or take a break! 🚀
+                  </div>
+                </div>
+
+                {/* Schedule Selection */}
+                <div className="et-field">
+                  <label className="et-label">Availability Schedule</label>
+                  <select name="schedule_id" className="et-input" value={form.schedule_id || ''} onChange={handleChange}>
+                    <option value="">Select a schedule</option>
+                    {schedules.map(s => (
+                      <option key={s.id} value={s.id}>{s.name} {s.is_default && '(Default)'}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Custom Questions */}
+                <div className="et-field">
+                  <label className="et-label">Custom Questions <span style={{color:'var(--gray-400)', fontWeight:400}}>(One per line)</span></label>
+                  <textarea
+                    name="custom_questions"
+                    className="et-input et-textarea"
+                    placeholder="e.g. What is your company name?&#10;What would you like to discuss?"
+                    value={form.custom_questions}
+                    onChange={handleChange}
+                    style={{ height: 80 }}
+                  />
                 </div>
 
                 {/* Description */}
                 <div className="et-field">
-                  <label className="et-label">Description <span style={{color:'var(--gray-400)', fontWeight:400}}>(optional)</span></label>
+                  <label className="et-label">Description</label>
                   <textarea
                     name="description"
                     className="et-input et-textarea"
@@ -246,10 +314,8 @@ export default function EventTypes() {
 
                   <div className="et-preview-tags">
                     <span className="et-preview-tag">⏱ {form.duration} min</span>
+                    {form.buffer_before > 0 && <span className="et-preview-tag">🛡️ {form.buffer_before}m buf</span>}
                     <span className="et-preview-tag">📹 1-on-1</span>
-                    {form.slug && (
-                      <span className="et-preview-tag">🔗 /{form.slug}</span>
-                    )}
                   </div>
 
                   <p className="et-preview-desc">
@@ -265,11 +331,6 @@ export default function EventTypes() {
             <div className="et-modal-footer">
               <button className="et-btn-cancel" onClick={closeModal}>Cancel</button>
               <button className="et-btn-create" onClick={handleCreateOrUpdate}>
-                {!form.id && (
-                  <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                    <line x1="7.5" y1="1" x2="7.5" y2="14"/><line x1="1" y1="7.5" x2="14" y2="7.5"/>
-                  </svg>
-                )}
                 {form.id ? 'Save Changes' : 'Create Event Type'}
               </button>
             </div>

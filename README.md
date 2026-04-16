@@ -1,43 +1,43 @@
-# Slot It - Professional Scheduler
+# Slot It - Professional Scheduler 🚀
 
-A high-performance, full-stack scheduling and booking web application built for seamless meeting management.
+A high-performance, full-stack scheduling and booking web application built for seamless meeting management. Optimized for productivity with a premium, responsive feel.
 
-## Tech Stack
-- **Frontend**: React (Vite), vanilla CSS (custom built for a sleek, modern scheduler UI).
-- **Backend**: Python (FastAPI API).
-- **Database**: SQLite (managed via SQLAlchemy, designed effectively with relational models). It can be transitioned to Postgres simply by swapping the `SQLALCHEMY_DATABASE_URL` string in `database.py`.
+## ✨ Latest Features
+- **Smart Rescheduling**: One-click reschedule that automatically notifies invitees.
+- **IST & Timezone Detection**: Automatically detects user's timezone and defaults to IST (Kolkata) for the host.
+- **Admin Feedback System**: Reply directly to invitee questions from the dashboard with automated email logs.
+- **Date Overrides**: Precision control over your calendar with holiday blocking and custom hours.
+- **Mobile First**: Fully responsive layout optimized for iPhone, Tablet, and Desktop.
+- **Premium UI**: Vanila CSS custom design with smooth transitions and glassmorphism elements.
 
-## Running the App Locally
+## 🛠 Tech Stack
+- **Frontend**: React (Vite), Custom Vanilla CSS.
+- **Backend**: Python (FastAPI).
+- **Database**: SQLite (SQLAlchemy ORM - DB agnostic).
 
-### 1. Backend Server Setup
-In a terminal, navigate to the `backend` directory:
+## 🚀 Quick Start
+
+### 1. Backend Setup
 ```bash
 cd backend
 python -m venv venv
-.\venv\Scripts\activate   # For Windows
-# source venv/bin/activate # For Mac/Linux
-pip install fastapi uvicorn sqlalchemy pydantic aiosqlite pydantic-settings alembic cors asyncpg psycopg2-binary
-```
-
-Seed the DB and start the server:
-```bash
+.\venv\Scripts\activate
+pip install -r requirements.txt  # Or install fastapi uvicorn sqlalchemy
 python seed.py
-uvicorn main:app --port 8000 --reload
+uvicorn main:app --reload
 ```
-*Note: Backend server will run on http://localhost:8000*
 
-### 2. Frontend Server Setup
-In another terminal, navigate to the `frontend` directory:
+### 2. Frontend Setup
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-*Note: The frontend allows you to navigate to the Booking/Admin dashboards!*
 
-## Assumptions & Design Choices
-- **UI Styling:** Chose minimal vanilla CSS to mirror the fluid nature, soft shadows, and clean lines of a professional scheduler while remaining lightweight. No complex tailwind classes or bootstrap involved.
-- **Database Schema:** Used SQLite for the demonstration. This fulfills "PostgreSQL or MySQL (design your own schema)" by establishing a 1:N relational paradigm in standard SQL schema that is DB-agnostic.
-- **Simplicity over Login:** Admin page is unsecured per prompt constraints (No Log-in requirement). Included `Home` component to route user to existing booked event types!
+## 📦 Deployment
+This app is ready for CI/CD. To deploy:
+1. Push to your Git repository.
+2. Connect to **Vercel** (Frontend) and **Render** (Backend).
+3. Set `VITE_API_URL` to your backend URL in Vercel environment variables.
 
-Enjoy your scheduling!
+Enjoy your seamless scheduling!

@@ -9,58 +9,52 @@ def seed():
     db = SessionLocal()
     
     # Check if already seeded
-    if db.query(models.EventType).first():
+    if db.query(models.Schedule).first():
         print("Database already seeded.")
         return
 
-    # 1. Event Types
-    event1 = models.EventType(name="15 Minute Meeting", duration=15, slug="15min", description="Quick catch up")
-    event2 = models.EventType(name="30 Minute Meeting", duration=30, slug="30min", description="Standard meeting")
-    event3 = models.EventType(name="60 Minute Interview", duration=60, slug="60min", description="Interview slot")
+    # 1. Create Default Schedule
+    default_sched = models.Schedule(name="Working Hours", is_default=True)
+    db.add(default_sched)
+    db.commit()
+    db.refresh(default_sched)
+
+    # 2. Event Types
+    event1 = models.EventType(
+        name="15 Minute Meeting", 
+        duration=15, 
+        slug="15min", 
+        description="Quick catch up", 
+        schedule_id=default_sched.id,
+        buffer_before=5,
+        buffer_after=5
+    )
+    event2 = models.EventType(
+        name="30 Minute Meeting", 
+        duration=30, 
+        slug="30min", 
+        description="Standard meeting", 
+        schedule_id=default_sched.id,
+        custom_questions="What would you like to discuss?\nAny specific project mentioned?"
+    )
     
-    db.add_all([event1, event2, event3])
+    db.add_all([event1, event2])
     db.commit()
 
-    # 2. Availability (Mon-Fri 9AM-5PM)
-    for day in range(5): # 0 to 4 (Monday to Friday)
+    # 3. Availability (Mon-Fri 9AM-5PM)
+    for day in range(5): 
         av = models.Availability(
+            schedule_id=default_sched.id,
             day_of_week=day,
             start_time=time(9, 0),
             end_time=time(17, 0),
-            timezone="UTC"
+            timezone="Asia/Kolkata"
         )
         db.add(av)
     
     db.commit()
 
-    # 3. Dummy Meetings
-    today = date.today()
-    tomorrow = today + timedelta(days=1)
-    
-    m1 = models.Meeting(
-        event_type_id=event2.id,
-        invitee_name="John Doe",
-        invitee_email="john@example.com",
-        date=tomorrow,
-        start_time=time(10, 0),
-        end_time=time(10, 30),
-        status="scheduled"
-    )
-    
-    m2 = models.Meeting(
-        event_type_id=event3.id,
-        invitee_name="Jane Smith",
-        invitee_email="jane@example.com",
-        date=today,
-        start_time=time(14, 0),
-        end_time=time(15, 0),
-        status="scheduled"
-    )
-
-    db.add_all([m1, m2])
-    db.commit()
-
-    print("Database seeded successfully.")
+    print("Database seeded successfully with Schedules and enhanced features.")
 
 if __name__ == "__main__":
     seed()

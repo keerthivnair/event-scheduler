@@ -3,6 +3,8 @@
 :root {
   --primary-color: #006bff;
   --primary-hover: #0054c8;
+  --blue-50: #eff6ff;
+  --blue-600: #2563eb;
   --bg-color: #f8f9fa;
   --text-main: #1d3445;
   --text-muted: #6b7c8c;
@@ -345,8 +347,37 @@ a:hover {
   background-color: var(--bg-color) !important;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
+/* responsiveness Fixes for Booking and Admin */
+@media (max-width: 900px) {
+  .booking-container {
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: auto !important;
+  }
+  .booking-sidebar {
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid #eee !important;
+    padding: 30px !important;
+  }
+  .booking-content {
+    width: 100% !important;
+    padding: 30px !important;
+  }
+  .booking-layout-flex {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .booking-layout-flex > div {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+  }
+  .react-calendar {
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 600px) {
   .admin-layout {
     flex-direction: column;
   }
@@ -354,26 +385,59 @@ a:hover {
     width: 100%;
     height: auto;
     position: relative;
-    padding: 20px;
-  }
-  .admin-content {
-    margin-left: 0;
-    padding: 20px;
-  }
-  .booking-container {
-    flex-direction: column;
-    margin: 20px auto;
-  }
-  .booking-sidebar {
-    width: 100%;
-    border-right: none;
+    padding: 20px 15px;
     border-bottom: 1px solid var(--border-color);
   }
-  .booking-content {
-    width: 100%;
+  .nav-links {
+    display: flex; 
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 5px;
   }
-  /* Fix Booking Calendar width */
-  .booking-content > div > div {
+  .nav-links li {
+    margin-bottom: 0;
+    flex: 0 0 auto;
+  }
+  .nav-links a {
+    padding: 8px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .admin-content {
+    margin-left: 0 !important;
+    padding: 24px 16px !important;
+  }
+  .page-header {
     flex-direction: column;
+    align-items: stretch !important;
+    gap: 12px;
   }
+  .card, .event-card {
+    padding: 16px !important;
+  }
+  h1 { font-size: 24px !important; }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Custom Calendar Polish */
+.custom-calendar {
+  border: none !important;
+  width: 100% !important;
+}
+.react-calendar__tile--now {
+  background: #f0f7ff !important;
+  color: var(--blue-600) !important;
+}
+.react-calendar__tile--active {
+  background: var(--blue-600) !important;
+  color: white !important;
 }
