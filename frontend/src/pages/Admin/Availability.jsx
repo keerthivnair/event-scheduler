@@ -47,9 +47,9 @@ export default function Availability() {
         <h1>Availability Settings</h1>
       </div>
 
-      <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', flexWrap: 'wrap' }}>
         
-        <div className="card" style={{ flex: 1 }}>
+        <div className="card" style={{ flex: '1 1 300px' }}>
           <h2 style={{ marginBottom: 20 }}>Current Schedule</h2>
           {availabilities.length === 0 ? <p>No availability set.</p> : null}
           {availabilities.map(av => (
@@ -67,7 +67,7 @@ export default function Availability() {
           ))}
         </div>
 
-        <div className="card" style={{ width: 350 }}>
+        <div className="card" style={{ flex: '1 1 300px' }}>
           <h2 style={{ marginBottom: 20 }}>Add Availability</h2>
           <form onSubmit={handleCreate}>
             <div className="form-group">

@@ -50,7 +50,7 @@ export default function Meetings() {
         <h1>Meetings</h1>
       </div>
 
-      <div style={{ display: 'flex', gap: '24px', borderBottom: '1px solid var(--gray-200)', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', gap: '24px', borderBottom: '1px solid var(--gray-200)', marginBottom: '24px', overflowX: 'auto' }}>
         <button 
           onClick={() => setActiveTab('upcoming')} 
           style={{ padding: '12px 0', border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '15px', fontWeight: activeTab === 'upcoming' ? '600' : '400', color: activeTab === 'upcoming' ? 'var(--blue-600)' : 'var(--gray-500)', borderBottom: activeTab === 'upcoming' ? '2px solid var(--blue-600)' : '2px solid transparent' }}
@@ -71,9 +71,9 @@ export default function Meetings() {
         </button>
       </div>
 
-      <div className="card" style={{ border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-lg)' }}>
+      <div className="card" style={{ border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-lg)', overflowX: 'auto' }}>
         {filteredMeetings.length === 0 ? <p style={{ color: 'var(--gray-500)' }}>No {activeTab} meetings found.</p> : 
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 600 }}>
           <thead>
             <tr style={{ borderBottom: '2px solid var(--border-color)', textAlign: 'left' }}>
               <th style={{ padding: 12 }}>Date</th>
