@@ -12,7 +12,7 @@ const AdminLayout = () => {
       <nav className="admin-sidebar">
         <div className="logo-container">
           <div className="logo">C</div>
-          <h2>Bag the slott</h2>
+          <h2>My Slotter</h2>
         </div>
         <ul className="nav-links">
           <li>
