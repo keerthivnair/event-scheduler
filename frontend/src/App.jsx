@@ -11,8 +11,8 @@ const AdminLayout = () => {
     <div className="admin-layout">
       <nav className="admin-sidebar">
         <div className="logo-container">
-          <div className="logo">M</div>
-          <h2>Phir Se Meetingg</h2>
+          <div className="logo">😩</div>
+          <h2 style={{ fontSize: '18px', fontWeight: '700' }}>Phir Se Meeting</h2>
         </div>
         <ul className="nav-links">
           <li>

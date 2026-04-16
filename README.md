@@ -1,4 +1,4 @@
-# Calendly Clone Application
+# Phir Se Meeting 😩 (Calendly Clone)
 
 A high-performance, full-stack scheduling and booking web application built to mirror the design and core functionality of Calendly.
 
