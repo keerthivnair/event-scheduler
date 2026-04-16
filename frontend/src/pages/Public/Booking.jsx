@@ -127,7 +127,20 @@ export default function Booking() {
                     </div>
                     <div className="slot-grid">
                       {slots.length === 0 ? <p>No slots available.</p> : null}
-                      {slots.map(t => (
+                      {slots.filter(t => {
+                        // Crucially filter out past slots based on strictly browser's local atomic time
+                        const isToday = new Date().setHours(0,0,0,0) === new Date(date).setHours(0,0,0,0);
+                        if (!isToday) return true;
+                        
+                        // User wants to see slots unless their end time has passed
+                        // t is "HH:mm:ss" like "09:00:00"
+                        const startTimeParts = t.split(':');
+                        const endD = new Date();
+                        endD.setHours(startTimeParts[0], startTimeParts[1], 0);
+                        endD.setMinutes(endD.getMinutes() + eventType.duration);
+                        
+                        return endD > new Date(); // Only keep if slot ends strictly in the future relative to user browser!
+                      }).map(t => (
                         <div key={t} className="time-slot fade-in">
                           <button 
                             className={`slot-btn ${selectedSlot === t ? 'selected' : ''}`}
