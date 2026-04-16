@@ -88,7 +88,7 @@ export default function Availability() {
             </div>
             <div className="form-group">
               <label className="form-label">Timezone</label>
-              <select name="timezone" className="form-control" required defaultValue="UTC">
+              <select name="timezone" className="form-control" required defaultValue="Asia/Kolkata">
                 <option value="UTC">UTC</option>
                 <option value="America/New_York">Eastern Time (US & Canada)</option>
                 <option value="America/Chicago">Central Time (US & Canada)</option>
