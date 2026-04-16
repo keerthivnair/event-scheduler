@@ -153,7 +153,7 @@ export default function Meetings() {
                             onClick={async () => {
                                const el = document.getElementById(`note-${m.id}`);
                                const val = el.value;
-                               await api.patch(`/meetings/${m.id}/notes`, { notes: val });
+                               await api.post(`/meetings/${m.id}/notes`, { notes: val });
                                setSentIds([...sentIds, m.id]);
                                el.value = ""; 
                             }}

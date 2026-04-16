@@ -328,7 +328,7 @@ def cancel_meeting(id: int, db: Session = Depends(get_db)):
         print(f"EMAIL TO: {m.invitee_email} | Subject: Cancelled | Your meeting was cancelled.")
     return {"message": "Canceled"}
 
-@app.patch("/meetings/{id}/notes")
+@app.post("/meetings/{id}/notes")
 def update_meeting_notes(id: int, note_data: dict, db: Session = Depends(get_db)):
     m = db.query(models.Meeting).filter(models.Meeting.id == id).first()
     if not m:
