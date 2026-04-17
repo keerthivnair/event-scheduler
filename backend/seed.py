@@ -3,9 +3,10 @@ from database import engine, SessionLocal
 import models
 from datetime import date, time, timedelta
 
-models.Base.metadata.create_all(bind=engine)
-
 def seed():
+    # 0. Create tables if they don't exist
+    models.Base.metadata.create_all(bind=engine)
+    
     db = SessionLocal()
     
     # Check if already seeded
