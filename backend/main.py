@@ -7,8 +7,6 @@ import models
 import schemas
 from database import engine, get_db
 
-models.Base.metadata.create_all(bind=engine)
-
 app = FastAPI(title="Slot It API")
 
 app.add_middleware(
@@ -22,6 +20,10 @@ app.add_middleware(
 # --- Startup ---
 @app.on_event("startup")
 def startup_event():
+    # 1. Create tables if they don't exist
+    models.Base.metadata.create_all(bind=engine)
+    
+    # 2. Seed default schedule
     db = next(get_db())
     try:
         schedules = db.query(models.Schedule).all()
