@@ -90,7 +90,14 @@ export default function Booking() {
 
   const questions = eventType?.custom_questions ? eventType.custom_questions.split('\n').filter(q => q.trim()) : [];
 
-  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 100 }}>Loading...</div>;
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column', gap: 20 }}>
+        <div className="spinner"></div>
+        <p style={{ color: 'var(--text-muted)', fontSize: 16 }}>Setting up your booking session...</p>
+      </div>
+    );
+  }
   if (error) return <div style={{ textAlign: 'center', paddingTop: 100 }}><h2>{error}</h2><button onClick={() => navigate('/')} className="btn btn-outline" style={{ marginTop: 20 }}>Home</button></div>;
 
   return (

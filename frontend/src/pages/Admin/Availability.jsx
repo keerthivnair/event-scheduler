@@ -8,18 +8,26 @@ export default function Availability() {
   const [availabilities, setAvailabilities] = useState([]);
   const [overrides, setOverrides] = useState([]);
   const [newScheduleName, setNewScheduleName] = useState('');
+  const [loading, setLoading] = useState(true);
   
   const navigate = useNavigate();
   const daysMap = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   useEffect(() => {
-    fetchSchedules();
+    const init = async () => {
+      setLoading(true);
+      await fetchSchedules();
+      setLoading(false);
+    }
+    init();
   }, []);
 
   useEffect(() => {
     if (selectedScheduleId) {
-      fetchAvailabilities();
-      fetchOverrides();
+      const load = async () => {
+        await Promise.all([fetchAvailabilities(), fetchOverrides()]);
+      };
+      load();
     }
   }, [selectedScheduleId]);
 
@@ -36,9 +44,6 @@ export default function Availability() {
   const fetchAvailabilities = async () => {
     try {
       const res = await api.get('/availability');
-      // Filter by schedule_id if needed, but the current API returns all. 
-      // Let's assume we filter here for simplicity or update backend.
-      // Actually, let's just filter here for now.
       setAvailabilities(res.data.filter(a => a.schedule_id === selectedScheduleId));
     } catch (e) { console.error(e); }
   };
@@ -107,6 +112,15 @@ export default function Availability() {
   };
 
   const selectedSchedule = schedules.find(s => s.id === selectedScheduleId);
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh', flexDirection: 'column', gap: 20 }}>
+        <div className="spinner"></div>
+        <p style={{ color: 'var(--text-muted)', fontSize: 16 }}>Loading schedules...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="fade-in">

@@ -49,9 +49,9 @@ class EventType(EventTypeBase):
 
 class AvailabilityBase(BaseModel):
     day_of_week: int
-    start_time: time
+    start_time: time 
     end_time: time
-    timezone: str = "UTC"
+    timezone: str = "Asia/Kolkata"
     schedule_id: int
 
 class AvailabilityCreate(AvailabilityBase):

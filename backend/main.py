@@ -19,6 +19,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# --- Startup ---
+@app.on_event("startup")
+def startup_event():
+    db = next(get_db())
+    try:
+        schedules = db.query(models.Schedule).all()
+        if not schedules:
+            default = models.Schedule(name="Working Hours", is_default=True)
+            db.add(default)
+            db.commit()
+            print("Default schedule created.")
+    finally:
+        db.close()
+
 # --- Schedules ---
 @app.post("/schedules", response_model=schemas.Schedule)
 def create_schedule(schedule: schemas.ScheduleCreate, db: Session = Depends(get_db)):
@@ -30,15 +44,7 @@ def create_schedule(schedule: schemas.ScheduleCreate, db: Session = Depends(get_
 
 @app.get("/schedules", response_model=List[schemas.Schedule])
 def get_schedules(db: Session = Depends(get_db)):
-    schedules = db.query(models.Schedule).all()
-    if not schedules:
-        # Create a default schedule if none exists
-        default = models.Schedule(name="Working Hours", is_default=True)
-        db.add(default)
-        db.commit()
-        db.refresh(default)
-        return [default]
-    return schedules
+    return db.query(models.Schedule).all()
 
 @app.delete("/schedules/{id}")
 def delete_schedule(id: int, db: Session = Depends(get_db)):

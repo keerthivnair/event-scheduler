@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../api';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 import './EventTypes.css';
 
 export default function EventTypes() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [eventTypes, setEventTypes] = useState([]);
   const [schedules, setSchedules] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ 
     name: '', 
@@ -21,9 +23,13 @@ export default function EventTypes() {
   });
 
   useEffect(() => {
-    fetchEventTypes();
-    fetchSchedules();
-  }, []);
+    const loadData = async () => {
+      setLoading(true);
+      await Promise.all([fetchEventTypes(), fetchSchedules()]);
+      setLoading(false);
+    };
+    loadData();
+  }, [location.pathname]);
 
   const fetchEventTypes = async () => {
     try {
@@ -146,7 +152,13 @@ export default function EventTypes() {
 
         {/* ── Grid ── */}
         <div className="et-grid">
-          {eventTypes.length === 0 ? (
+          {loading ? (
+             <div className="et-empty" style={{ gridColumn: '1 / -1', padding: '100px 0' }}>
+               <div className="spinner" style={{ margin: '0 auto 20px' }}></div>
+               <h3>Fetching your events...</h3>
+               <p>This may take a moment if the database is waking up.</p>
+             </div>
+          ) : eventTypes.length === 0 ? (
             <div className="et-empty">
               <div className="et-empty-icon">📅</div>
               <h3>No event types yet</h3>

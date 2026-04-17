@@ -40,4 +40,13 @@ This app is ready for CI/CD. To deploy:
 2. Connect to **Vercel** (Frontend) and **Render** (Backend).
 3. Set `VITE_API_URL` to your backend URL in Vercel environment variables.
 
+### 💾 Persistent Database (Crucial for Production)
+By default, the app uses **SQLite**, which is a local file. On platforms like Render or Fly.io, the filesystem is **ephemeral** (wiped on every restart/deploy). To keep your event types and bookings permanently:
+
+1. Create a free PostgreSQL database (e.g., on [Supabase](https://supabase.com) or [Neon](https://neon.tech)).
+2. Copy your **External Database URL**.
+3. In your **Render Dashboard**, go to **Environment Variables**.
+4. Add a new variable: `DATABASE_URL` and paste your connection string.
+5. The app will automatically detect this and switch from SQLite to PostgreSQL.
+
 Enjoy your seamless scheduling!

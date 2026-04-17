@@ -6,10 +6,16 @@ export default function Meetings() {
   const [meetings, setMeetings] = useState([]);
   const [activeTab, setActiveTab] = useState('upcoming');
   const [sentIds, setSentIds] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchMeetings();
+    const init = async () => {
+      setLoading(true);
+      await fetchMeetings();
+      setLoading(false);
+    };
+    init();
   }, []);
 
   const fetchMeetings = async () => {
@@ -81,7 +87,12 @@ export default function Meetings() {
       </div>
 
       <div className="card" style={{ border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-lg)', overflowX: 'auto' }}>
-        {filteredMeetings.length === 0 ? <p style={{ padding: 20, color: 'var(--gray-500)' }}>No {activeTab} meetings found.</p> : 
+        {loading ? (
+          <div style={{ padding: '80px 0', textAlign: 'center' }}>
+            <div className="spinner" style={{ margin: '0 auto 20px' }}></div>
+            <p style={{ color: 'var(--text-muted)' }}>Fetching meetings...</p>
+          </div>
+        ) : filteredMeetings.length === 0 ? <p style={{ padding: 20, color: 'var(--gray-500)' }}>No {activeTab} meetings found.</p> : 
         <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 800 }}>
           <thead>
             <tr style={{ borderBottom: '2px solid var(--border-color)', textAlign: 'left' }}>
