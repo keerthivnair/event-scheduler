@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Outlet } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import EventTypes from './pages/Admin/EventTypes';
 import Availability from './pages/Admin/Availability';
 import Meetings from './pages/Admin/Meetings';
@@ -47,6 +48,7 @@ function App() {
           <Route index element={<EventTypes />} />
         </Route>
       </Routes>
+      <Analytics />
     </Router>
   );
 }
